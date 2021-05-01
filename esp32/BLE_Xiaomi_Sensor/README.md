@@ -1,6 +1,6 @@
 # Xiaomi Temperature Sensor
 
-![Sensor](https://i.imgur.com/B5J2PLV.png)
+![Sensor](https://i.imgur.com/B5J2PLV.png?1)
 
 |                     |                                        |
 |---------------------|----------------------------------------|
