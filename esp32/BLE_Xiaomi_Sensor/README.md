@@ -1,5 +1,7 @@
 # Xiaomi Temperature Sensor
 
+![Sensor](https://i.imgur.com/B5J2PLV.png)
+
 |                     |                                        |
 |---------------------|----------------------------------------|
 | Model               | `LYWSD03MMC` |
