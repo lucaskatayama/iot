@@ -77,19 +77,19 @@ static void notifyCallback(
   Serial.println(hum);
   doSomething(temp, hum);
   done = true;
+
 }
 
 class MyClientCallback : public BLEClientCallbacks
 {
   void onConnect(BLEClient *pClient)
-  {
+  { 
     Serial.println("Connecting to the server.");
     // Obtain a reference to the service we are after in the remote BLE server.
   }
 
   void onDisconnect(BLEClient *pclient)
   {
-
     Serial.println("onDisconnect");
   }
 };
