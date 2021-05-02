@@ -2,6 +2,8 @@
 
 A bunch of IOT projects.
 
+![IOT](https://i.imgur.com/0YAPt4k.jpg?1)
+
 ## Boards
 
 * [Arduino Nano v3](./arduino)
