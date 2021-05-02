@@ -1,16 +1,21 @@
 #include <Arduino.h>
 #include <Adafruit_BMP085.h>
+#include <Adafruit_Sensor.h>
 #include <DHT.h>
+#include <DHT_U.h>
 
-#define DHTPIN 2
+#define DHTPIN 6
 #define DHTTYPE DHT11
 #define LIGHT_PIN A0
 #define SOIL_PIN A1
-#define INTERVAL_PIN 8
+#define INTERVAL_PIN 10
 #define RELAY_PIN 12
 
+#define DHTTYPE DHT11 // DHT 11
+
+DHT_Unified dht(DHTPIN, DHTTYPE);
+
 Adafruit_BMP085 bmp;
-DHT dht(DHTPIN, DHTTYPE);
 int dryValue = 0;
 int wetValue = 1023;
 int friendlyDryValue = 0;
@@ -19,7 +24,6 @@ int friendlyWetValue = 100;
 float pres;
 float temp;
 float hum;
-float temp2;
 float light;
 float soil;
 
@@ -59,8 +63,19 @@ void readSensors()
 {
   pres = bmp.readPressure() / 1000;
   temp = bmp.readTemperature();
-  hum = dht.readHumidity();
-  light = analogRead(LIGHT_PIN);
+
+  // dht11
+  sensors_event_t event;
+
+  // Get humidity event and print its value.
+  dht.humidity().getEvent(&event);
+  hum = 0;
+  if (!isnan(event.relative_humidity))
+  {
+    hum = event.relative_humidity;
+  }
+
+  light = map(analogRead(LIGHT_PIN), 0, 1023, 0, 100);
   soil = map(analogRead(SOIL_PIN), 0, 1023, 0, 100);
 }
 
