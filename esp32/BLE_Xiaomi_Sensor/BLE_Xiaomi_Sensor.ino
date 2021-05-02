@@ -8,7 +8,7 @@ Preferences preferences;
 String ssid;
 String password;
 
-static String serverName = "http://api.thingspeak.com/update?api_key=MSB01IM7LIGFX4JC";
+static String serverName = "http://api.thingspeak.com/update?api_key=<APIKEY>";
 
 static BLEAddress addr((std::string) "a4:c1:38:d2:a1:da");
 static BLEUUID serviceUUID("ebe0ccb0-7a0a-4b0c-8a1a-6ff2997da3a6");
@@ -16,6 +16,9 @@ static BLEUUID charUUID("ebe0ccc1-7a0a-4b0c-8a1a-6ff2997da3a6");
 
 static boolean doConnect = true;
 static boolean done = false;
+
+static BLERemoteCharacteristic *pRemoteCharacteristic;
+static BLEClient *pClient;
 
 static void doSomething(float temp, int hum)
 {
@@ -75,59 +78,52 @@ static void notifyCallback(
   doSomething(temp, hum);
   done = true;
 
-  pRemoteCharacteristic->registerForNotify(NULL);
 }
 
 class MyClientCallback : public BLEClientCallbacks
 {
   void onConnect(BLEClient *pClient)
-  {
-    Serial.println("Connected to the server.");
+  { 
+    Serial.println("Connecting to the server.");
     // Obtain a reference to the service we are after in the remote BLE server.
-
-    BLERemoteService *pRemoteService = pClient->getService(serviceUUID);
-    if (pRemoteService == nullptr)
-    {
-      Serial.print("Failed to find our service UUID: ");
-      Serial.println(serviceUUID.toString().c_str());
-      return;
-    }
-    Serial.println("service found");
-    // Obtain a reference to the characteristic in the service of the remote BLE server.
-    BLERemoteCharacteristic *pRemoteCharacteristic = pRemoteService->getCharacteristic(charUUID);
-    if (pRemoteCharacteristic == nullptr)
-    {
-      Serial.print("Failed to find our characteristic UUID: ");
-      Serial.println(charUUID.toString().c_str());
-      return;
-    }
-    Serial.println("characteristic found");
-    Serial.println("Waiting data.");
-    pRemoteCharacteristic->registerForNotify(notifyCallback);
-    delay(10000);
-    pClient->disconnect();
   }
 
   void onDisconnect(BLEClient *pclient)
   {
-    doConnect = true;
-    done = false;
     Serial.println("onDisconnect");
-    delay(30000);
   }
 };
 
 void connectToServer(BLEAddress pAddress)
 {
 
-  BLEClient *pClient = BLEDevice::createClient();
-  pClient->setClientCallbacks(new MyClientCallback());
+  pClient = BLEDevice::createClient();
   Serial.println("Client created.");
   Serial.print("Connecting to ");
   Serial.println(pAddress.toString().c_str());
+  pClient->connect(pAddress);
+
+  BLERemoteService *pRemoteService = pClient->getService(serviceUUID);
+  if (pRemoteService == nullptr)
+  {
+    Serial.print("Failed to find our service UUID: ");
+    Serial.println(serviceUUID.toString().c_str());
+    return;
+  }
+  Serial.println("service found");
+  // Obtain a reference to the characteristic in the service of the remote BLE server.
+  pRemoteCharacteristic = pRemoteService->getCharacteristic(charUUID);
+  if (pRemoteCharacteristic == nullptr)
+  {
+    Serial.print("Failed to find our characteristic UUID: ");
+    Serial.println(charUUID.toString().c_str());
+    return;
+  }
+  Serial.println("characteristic found");
+  Serial.println("Waiting data.");
+  pRemoteCharacteristic->registerForNotify(notifyCallback);
 
   // Connect to the remove BLE Server.
-  pClient->connect(pAddress);
 }
 
 void setupWIFI()
@@ -161,6 +157,7 @@ void setupWIFI()
 void setup()
 {
   Serial.begin(115200);
+  setupWIFI();
   Serial.println("Starting Arduino BLE Client application...");
   setupWIFI();
 
@@ -174,5 +171,12 @@ void loop()
   {
     connectToServer(addr);
     doConnect = false;
+  }
+  if (done)
+  {
+    pClient->disconnect();
+    doConnect = true;
+    done = false;
+    delay(10000);
   }
 }

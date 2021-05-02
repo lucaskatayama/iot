@@ -8,6 +8,6 @@
 
 ![Pins](https://i.imgur.com/bCuaOxa.png?1)
 
-## Projects
+# Projects
 
 * [BLE Xiaomi Sensor](./BLE_Xiaomi_Sensor/README.md)
