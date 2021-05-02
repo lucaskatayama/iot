@@ -10,4 +10,4 @@
 
 ## Projects
 
-* [BLE Xiaomi Sensor](./BLE_Xiaomi_Sensor/README.md)
+* [BLE Xiaomi Sensor](./BLE_Xiaomi_Sensor)

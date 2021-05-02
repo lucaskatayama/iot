@@ -38,12 +38,12 @@ We can iterates over all bytes and read the information.
 
 The information provided from Xiaomi sensor comes in the form:
 
-```text
+``` text
 length: 5
 [temperature] [temperature] [humidity] [battery] [battery]
 ```
 
-The humidity is an percentage `integer`.
+The humidity is an percentage `integer` .
 
 The temperature is calculated below:
 
@@ -53,9 +53,19 @@ The temperature is calculated below:
 float temp = (pData[0] | (pData[1] << 8)) * 0.01; 
 ```
 
+## More information
+
+### Preferences and WiFi
+
+I also use the `Preferences` library to save the WiFi SSID and password inside the ESP32.
+
+### ThingSpeak
+
+You need to create an account and generate an API key. Replace the `<APIKey>` in the source code.
+
 ## References
 
-* [Github](https://github.com/polclota/esp32lywsd03mmc/blob/master/src/main.ino)
+* [Basic Arduino C ESP32 code for Mijia LYWSD03MMC](https://github.com/polclota/esp32lywsd03mmc/blob/master/src/main.ino)
 * [Working version for BLE](https://github.com/wakwak-koba/arduino-esp32)
 * [ThingSpeak](https://thingspeak.com/)
 * [nRF Connect for Mobile](https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp)
