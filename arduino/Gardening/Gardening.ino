@@ -76,7 +76,7 @@ void readSensors()
   }
 
   light = map(analogRead(LIGHT_PIN), 0, 1023, 0, 100);
-  soil = map(analogRead(SOIL_PIN), 0, 1023, 0, 100);
+  soil = map(analogRead(SOIL_PIN), 0, 1023, 100, 0);
 }
 
 void changeInterval()
