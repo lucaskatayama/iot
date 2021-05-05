@@ -4,6 +4,9 @@
 #include "WiFi.h"
 #include <HTTPClient.h>
 
+#define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP 5        /* Time ESP32 will go to sleep (in seconds) */
+
 Preferences preferences;
 String ssid;
 String password;
@@ -157,6 +160,7 @@ void setupWIFI()
 void setup()
 {
   Serial.begin(115200);
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
   setupWIFI();
   Serial.println("Starting Arduino BLE Client application...");
   setupWIFI();
@@ -178,5 +182,6 @@ void loop()
     doConnect = true;
     done = false;
     delay(10000);
+    
   }
 }
