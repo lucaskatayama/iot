@@ -13,44 +13,13 @@
 #define SOIL_PIN 12
 #define CHECK_INTERVAL 5000
 #define LIGHT_THRESHOLD 50
+#define LIGHT_INTERVAL 300000
 
 // Create variables:
 int val = 0;
 bool motionState = false; // We start with no motion detected.
-unsigned long last = 0;
-
-void testPINS()
-{
-    digitalWrite(LED_GREEN_PIN, HIGH);
-    digitalWrite(LED_RED_PIN, HIGH);
-    digitalWrite(RELAY1_PIN, LOW);
-    digitalWrite(RELAY2_PIN, LOW);
-    delay(2000);
-    digitalWrite(LED_GREEN_PIN, LOW);
-    digitalWrite(LED_RED_PIN, LOW);
-    digitalWrite(RELAY1_PIN, HIGH);
-    digitalWrite(RELAY2_PIN, HIGH);
-    delay(2000);
-}
-
-void setup()
-{
-    Serial.begin(9600);
-    pinMode(WATER_LEVEL_PIN, INPUT);
-    pinMode(SOIL_PIN, INPUT);
-    pinMode(PIR_PIN, INPUT);
-    pinMode(LDR_PIN, INPUT);
-
-    pinMode(LED_GREEN_PIN, OUTPUT);
-    pinMode(LED_RED_PIN, OUTPUT);
-    pinMode(RELAY1_PIN, OUTPUT);
-    pinMode(RELAY2_PIN, OUTPUT);
-
-    testPINS();
-
-    last = millis();
-    Serial.println("ldr,soil,water");
-}
+unsigned long lastPump = 0;
+unsigned long lastLight = 0;
 
 void toggleLight(boolean onoff)
 {
@@ -82,7 +51,7 @@ void Pump()
         digitalWrite(LED_RED_PIN, LOW);
     }
     unsigned long now = millis();
-    if (now - last > CHECK_INTERVAL)
+    if (now - lastPump > CHECK_INTERVAL)
     {
         int soil = digitalRead(SOIL_PIN);
         if (soil)
@@ -96,14 +65,14 @@ void Pump()
             digitalWrite(RELAY1_PIN, HIGH);
             digitalWrite(LED_GREEN_PIN, LOW);
         }
-        last = now;
+        lastPump = now;
     }
 }
 
 void PIR()
 {
     int ldr = map(analogRead(LDR_PIN), 0, 1023, 0, 100);
-    if (ldr >= LIGHT_THRESHOLD)
+    if (millis() - lastLihgt >= LIGHT_INTERVAL && ldr >= LIGHT_THRESHOLD)
     {
         toggleLight(false);
         return;
@@ -128,7 +97,42 @@ void PIR()
             motionState = false;
         }
     }
+    lastLight = millis();
     toggleLight(motionState);
+}
+
+void testPINS()
+{
+    digitalWrite(LED_GREEN_PIN, HIGH);
+    digitalWrite(LED_RED_PIN, HIGH);
+    digitalWrite(RELAY1_PIN, LOW);
+    digitalWrite(RELAY2_PIN, LOW);
+    delay(2000);
+    digitalWrite(LED_GREEN_PIN, LOW);
+    digitalWrite(LED_RED_PIN, LOW);
+    digitalWrite(RELAY1_PIN, HIGH);
+    digitalWrite(RELAY2_PIN, HIGH);
+    delay(2000);
+}
+
+void setup()
+{
+    Serial.begin(9600);
+    pinMode(WATER_LEVEL_PIN, INPUT);
+    pinMode(SOIL_PIN, INPUT);
+    pinMode(PIR_PIN, INPUT);
+    pinMode(LDR_PIN, INPUT);
+
+    pinMode(LED_GREEN_PIN, OUTPUT);
+    pinMode(LED_RED_PIN, OUTPUT);
+    pinMode(RELAY1_PIN, OUTPUT);
+    pinMode(RELAY2_PIN, OUTPUT);
+
+    testPINS();
+
+    lastPump = millis();
+    lastLight = millis();
+    Serial.println("ldr,soil,water");
 }
 
 void loop()
