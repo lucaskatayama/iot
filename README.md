@@ -2,8 +2,9 @@
 
 A bunch of IOT projects.
 
-## Boards
-
-* [Arduino Nano v3](./arduino)
-* [ESP32](./esp32)
-* [Raspberry PI 3](./raspberry)
+* Projects
+  + [BLE Xiaomi Sensor](./projects/BLE_Xiaomi_Sensor)
+* Modules, Sensors and Libs
+  + [Preferences](./modules_sensors_libs/Preferences)
+  + [PIR](./modules_sensors_libs/PIR)
+  + [nRF24L01](./modules_sensors_libs/nRF24L01)
